@@ -64,16 +64,16 @@ const JoinClass = () => {
                             Join
                         </Button>
                     </div>
-                    <div className=" border-2 rounded-md mt-4 container w-[33rem] p-4">
-                        <p className='sm:mb-[0.8rem]'>
+                    <div className=" border-2 rounded-md mt-4 container w-[24rem] sm:w-[33rem] p-4">
+                        <p className='text-sm sm:text-lg mb-[0.8rem]'>
                             You're currently signed in as {currentUser?.currentUser?.email}
                         </p>
                         <div className="flex justify-between">
                             <div className="flex">
                                 <Avatar src={currentUser?.currentUser?.photo} />
                                 <div className="ml-4">
-                                    <div className="font-bold">{currentUser?.currentUser?.name}</div>
-                                    <div className="text-[#5f6368] overflow-hidden text-ellipsis">{currentUser?.currentUser?.email}</div>
+                                    <div className=" text-sm sm:text-lg font-bold">{currentUser?.currentUser?.name}</div>
+                                    <div className="text-[#5f6368] text-sm sm:text-lg overflow-hidden text-ellipsis">{currentUser?.currentUser?.email}</div>
                                 </div>
                             </div>
                             <Button variant='outlined' color='primary'>
