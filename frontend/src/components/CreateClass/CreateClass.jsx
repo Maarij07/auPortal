@@ -38,9 +38,9 @@ const createClass = () => {
                 <div className="form p-4">
                     <h2 className='font-bold'>Create Class</h2>
                     <div className="p-4 flex flex-col gap-2">
-                        <TextField id="filled-basic" value={courseName} onChange={(e) => setCourseName(e.target.value)} label="Course Name *" variant='filled' className='w-[30rem]' />
-                        <TextField id="filled-basic" value={section} onChange={(e) => setSection(e.target.value)} label="Section" variant='filled' className='w-[30rem]' />
-                        <TextField id="filled-basic" value={className} onChange={(e) => setClassName(e.target.value)} label="Class Name *" variant='filled' className='w-[30rem]' />
+                        <TextField id="filled-basic" value={courseName} onChange={(e) => setCourseName(e.target.value)} label="Course Name *" variant='filled' className='w-[15rem] sm:w-[30rem]' />
+                        <TextField id="filled-basic" value={section} onChange={(e) => setSection(e.target.value)} label="Section" variant='filled' className='w-[15rem] sm:w-[30rem]' />
+                        <TextField id="filled-basic" value={className} onChange={(e) => setClassName(e.target.value)} label="Class Name *" variant='filled' className='w-[15rem] sm:w-[30rem]' />
                     </div>
                     <DialogActions>
                         <Button onClick={addClass} color="primary">
