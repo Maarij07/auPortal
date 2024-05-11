@@ -19,12 +19,12 @@ import { AiOutlinePieChart } from "react-icons/ai";
 
 const Main = ({ classData }) => {
     const navigate = useNavigate();
-    const { loggedInMail } = useLocalContext();
+    const { loggedInMail,loggedInUser } = useLocalContext();
     const [showInput, setShowInput] = useState(false);
     const [inputValue, setInputValue] = useState();
     const [file, setFile] = useState(null);
     const [editOpen, setEditOpen] = useState(false)
-    // const classQr = classData.id;
+    const [gradeOpen, setGradeOpen] = useState(false)
     const currentUser = useSelector(SelectUsers);
     const [anchorEl, setAnchorEl] = useState(null);
     const handleClick = (event) => setAnchorEl(event.currentTarget);
@@ -32,9 +32,14 @@ const Main = ({ classData }) => {
     const currentMail = currentUser.currentUser.email
     const classOwnerMail = classData.owner
     const classId = classData.id
-    const [className, setClassName] = useState('');
-    const [creditHours, setCreditHours] = useState('');
-    const [courseName, setCourseName] = useState('');
+    const [className, setClassName] = useState(classData.className);
+    const [courseName, setCourseName] = useState(classData.courseName);
+    const [creditHours, setCreditHours] = useState(classData.creditHours);
+    const [assignmentWeightage,setAssignmentWeightage]=useState(0);
+    const [quizWeightage,setQuizWeightage]=useState(0);
+    const [midsWeightage,setMidsWeightage]=useState(0);
+    const [finalWeightage,setFinalWeightage] = useState(0);
+    const [projectWeightage,setProjectWeightage] = useState(0);
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
@@ -82,6 +87,36 @@ const Main = ({ classData }) => {
         navigate('/');
         console.log("delete command sent");
     }
+    const editClass = (e) => {
+        e.preventDefault();
+        const id = classData.id;
+        const mainDoc = doc(db, `CreatedClasses/${loggedInMail}`);
+        const childDoc = doc(mainDoc, `classes/${id}`);
+        const docData = {
+            owner: loggedInMail,
+            className: className,
+            creditHours: creditHours,
+            courseName: courseName,
+            teacher: loggedInUser.displayName,
+            id: id
+        };
+        setDoc(childDoc, docData, {merge:true});
+        setEditOpen(false);
+    }
+    const gradeClass=(e)=>{
+        e.preventDefault()
+        const mainDoc = doc(db, `CreatedClasses/${loggedInMail}`);
+        const childDoc = doc(mainDoc, `classes/${id}`);
+        const docData={
+            assignmentWeightage:assignmentWeightage,
+            quizWeightage:quizWeightage,
+            midsWeightage:midsWeightage,
+            finalWeightage:finalWeightage,
+            projectWeightage:projectWeightage
+        }
+        setDoc(childDoc, docData, {merge:true});
+        setGradeOpen(false);
+    }
 
     return (
         <div className="">
@@ -104,7 +139,7 @@ const Main = ({ classData }) => {
                                 open={Boolean(anchorEl)}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={() => { }}><AiOutlinePieChart />&nbsp;Grading</MenuItem>
+                                <MenuItem onClick={() => { setGradeOpen(true) }}><AiOutlinePieChart />&nbsp;Grading</MenuItem>
                                 <MenuItem onClick={() => { setEditOpen(true) }}><GoPencil />&nbsp;Edit Class</MenuItem>
                                 <MenuItem onClick={handleDelete}> <MdDeleteOutline />&nbsp;Delete Class</MenuItem>
                             </Menu>
@@ -164,8 +199,30 @@ const Main = ({ classData }) => {
                         <TextField id="filled-basic" value={creditHours} onChange={(e) => setCreditHours(e.target.value)} label="Credit Hours" variant='filled' className='w-[30rem]' />
                     </div>
                     <DialogActions>
-                        <Button color="primary">
+                        <Button onClick={editClass} color="primary">
                             Edit
+                        </Button>
+                    </DialogActions>
+                </div>
+            </Dialog>
+            <Dialog
+                open={gradeOpen}
+                onClose={() => setGradeOpen(false)}
+                aria-labelledby='dialog-title'
+            >
+                {/* <DialogTitle id="dialog-title">Edit Class</DialogTitle> */}
+                <div className="form p-4">
+                    <h2 className='font-bold'>Grading System (Total 100%) </h2>
+                    <div className="p-4 flex flex-col gap-2">
+                        <TextField id="filled-basic" value={assignmentWeightage} onChange={(e) => setAssignmentWeightage(e.target.value)} label="Assignment Weightage(%)" variant='filled' className='w-[30rem]' />
+                        <TextField id="filled-basic" value={quizWeightage} onChange={(e) => setQuizWeightage(e.target.value)} label="Quiz Weightage(%)" variant='filled' className='w-[30rem]' />
+                        <TextField id="filled-basic" value={midsWeightage} onChange={(e) => setMidsWeightage(e.target.value)} label="Mids Weightage(%)" variant='filled' className='w-[30rem]' />
+                        <TextField id="filled-basic" value={finalWeightage} onChange={(e) => setFinalWeightage(e.target.value)} label="Final Weightage(%)" variant='filled' className='w-[30rem]' />
+                        <TextField id="filled-basic" value={projectWeightage} onChange={(e) => setProjectWeightage(e.target.value)} label="Project Weightage(%)" variant='filled' className='w-[30rem]' />
+                    </div>
+                    <DialogActions>
+                        <Button onClick={gradeClass} color="primary">
+                            Grade
                         </Button>
                     </DialogActions>
                 </div>

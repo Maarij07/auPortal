@@ -26,7 +26,7 @@ export default function SignIn() {
     }, [dispatch]);
 
     const checkEducationalEmail = (email) => {
-        const educationalDomains = ["edu", "ac", "school"];
+        const educationalDomains = ["edu", "au", "school"];
         const domain = email.substring(email.lastIndexOf("@") + 1);
         return educationalDomains.some(eduDomain => domain.includes(eduDomain));
     };

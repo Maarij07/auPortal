@@ -8,7 +8,7 @@ import db from '../../lib/firebase';
 const createClass = () => {
     const { createClassDialog, setCreateClassDialog, loggedInMail, loggedInUser } = useLocalContext();
     const [className, setClassName] = useState('');
-    const [section, setSection] = useState('');
+    const [creditHours, setCreditHours] = useState('');
     const [courseName, setCourseName] = useState('');
 
     const addClass = (e) => {
@@ -19,7 +19,7 @@ const createClass = () => {
         const docData = {
             owner: loggedInMail,
             className: className,
-            section: section,
+            creditHours: creditHours,
             courseName: courseName,
             teacher: loggedInUser.displayName,
             id: id
@@ -39,8 +39,8 @@ const createClass = () => {
                     <h2 className='font-bold'>Create Class</h2>
                     <div className="p-4 flex flex-col gap-2">
                         <TextField id="filled-basic" value={courseName} onChange={(e) => setCourseName(e.target.value)} label="Course Name *" variant='filled' className='w-[15rem] sm:w-[30rem]' />
-                        <TextField id="filled-basic" value={section} onChange={(e) => setSection(e.target.value)} label="Section" variant='filled' className='w-[15rem] sm:w-[30rem]' />
                         <TextField id="filled-basic" value={className} onChange={(e) => setClassName(e.target.value)} label="Class Name *" variant='filled' className='w-[15rem] sm:w-[30rem]' />
+                        <TextField id="filled-basic" value={creditHours} onChange={(e) => setCreditHours(e.target.value)} label="Credit Hours" variant='filled' className='w-[15rem] sm:w-[30rem]' />
                     </div>
                     <DialogActions>
                         <Button onClick={addClass} color="primary">
