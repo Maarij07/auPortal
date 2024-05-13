@@ -7,6 +7,7 @@ import { signOut } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/userSlice';
 import { MdOutlineVideoCameraFront } from "react-icons/md";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
 const LogoutDialog = ({ onConfirm, onCancel }) => {
     return (
@@ -64,12 +65,18 @@ const Sidebar = () => {
                 <RiLogoutBoxLine />
                 <button>Logout</button>
             </div>
-            {showLogoutDialog && (
-                <LogoutDialog
-                    onConfirm={confirmLogout}
-                    onCancel={cancelLogout}
-                />
-            )}
+            <Dialog aria-labelledby='dialog-title' aria-describedby='dialog-content' open={showLogoutDialog} onClose={cancelLogout}>
+                <DialogTitle id="dialog-title" >Logout</DialogTitle>
+                <DialogContent id="dialog-content" >Are you sure you want to logout?</DialogContent>
+                <DialogActions>
+                    <Button onClick={cancelLogout} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmLogout} color="primary">
+                        Logout
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }

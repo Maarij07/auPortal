@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import TopBar from '../TopBar/TopBar'
 import { Avatar, TextField, Button, Dialog, DialogActions, DialogTitle } from '@mui/material'
 import { useState } from 'react';
@@ -40,6 +40,8 @@ const Main = ({ classData }) => {
     const [midsWeightage,setMidsWeightage]=useState(0);
     const [finalWeightage,setFinalWeightage] = useState(0);
     const [projectWeightage,setProjectWeightage] = useState(0);
+    const [totalWeightage,setTotalWeightage] = useState(0);
+    const [disabled,setDisabled] = useState(true);
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
@@ -103,8 +105,17 @@ const Main = ({ classData }) => {
         setDoc(childDoc, docData, {merge:true});
         setEditOpen(false);
     }
+    useEffect(()=>{
+        setTotalWeightage(parseInt(assignmentWeightage)+parseInt(quizWeightage)+parseInt(midsWeightage)+parseInt(finalWeightage)+ parseInt(projectWeightage))
+        console.log(totalWeightage);
+        if(totalWeightage==100)
+            setDisabled(false)
+
+    },[assignmentWeightage,quizWeightage,midsWeightage,finalWeightage,projectWeightage])
+
     const gradeClass=(e)=>{
         e.preventDefault()
+        const id=classData.id;
         const mainDoc = doc(db, `CreatedClasses/${loggedInMail}`);
         const childDoc = doc(mainDoc, `classes/${id}`);
         const docData={
@@ -221,7 +232,7 @@ const Main = ({ classData }) => {
                         <TextField id="filled-basic" value={projectWeightage} onChange={(e) => setProjectWeightage(e.target.value)} label="Project Weightage(%)" variant='filled' className='w-[30rem]' />
                     </div>
                     <DialogActions>
-                        <Button onClick={gradeClass} color="primary">
+                        <Button onClick={gradeClass} disabled={disabled} color="primary">
                             Grade
                         </Button>
                     </DialogActions>

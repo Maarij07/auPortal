@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { SelectUsers } from './store/userSlice';
-import { ClassCard, Home, Login, Signup ,ZegoCloud} from './components/index';
+import { ClassCard, Home, Login, Signup ,ZegoCloud,ForgotPassword} from './components/index';
 import { useLocalContext } from './context/context';
 import { onSnapshot, doc, collection } from 'firebase/firestore';
 import db from './lib/firebase';
@@ -74,6 +74,7 @@ function App() {
         <Routes>
           <Route index element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgotPassword" element={<ForgotPassword/>} />
         </Routes>
       </BrowserRouter>
     );

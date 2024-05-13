@@ -94,7 +94,7 @@ export default function SignIn() {
                             <input className=" sm:w-[22rem] border-2 rounded-full py-2 px-4" name='password' required type="password" placeholder='Password' onChange={handleCredentials} />
                         </div>
                         <button onClick={handleLogin} type="submit" className=" w-[13.5rem] sm:w-[22rem] rounded-full py-2 font-bold bg-gradient-to-r from-[#032B44] via-[#205475] to-[#052F48] text-white">Log in</button>
-                        <p onClick={handlePasswordReset} className='underline cursor-pointer font-medium text-blue-800 text-right'>Forgot Password?</p>
+                        <Link to='/forgotPassword' className='underline cursor-pointer font-medium text-blue-800 text-right'>Forgot Password?</Link>
                         <p className='mx-auto text-gray-500 text-xl font-bold'>OR</p>
                         <button className='flex gap-4 rounded-full items-center justify-center text-red-500 font-bold' onClick={handleGoogleLogin}><FaGoogle />Login With Google</button>
                     </form>

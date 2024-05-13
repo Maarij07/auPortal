@@ -72,12 +72,6 @@ export default function Signup() {
     };
 
     return (
-        // <div className="flex">
-        //     <div className="w-1/2 flex items-center justify-center">
-        //         <img src={'/banner.png'} alt="AIR" className='w-full h-full object-cover' />
-        //     </div>
-
-        // </div>
         <div className="flex items-center justify-center">
             <div className="h-screen flex flex-col items-center justify-center gap-[2rem] w-1/2">
                 <div className=" flex flex-col items-center">

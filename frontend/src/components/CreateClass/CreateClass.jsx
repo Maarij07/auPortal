@@ -22,6 +22,7 @@ const createClass = () => {
             creditHours: creditHours,
             courseName: courseName,
             teacher: loggedInUser.displayName,
+            call:null,
             id: id
         };
         setDoc(childDoc, docData);
