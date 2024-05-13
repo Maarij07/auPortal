@@ -8,9 +8,9 @@ import { onSnapshot, doc, collection } from 'firebase/firestore';
 import db from './lib/firebase';
 import {Main} from './components/index';
 
-
 function App() {
   const user = useSelector(SelectUsers);
+  let id=null;
 
   const { loggedInMail } = useLocalContext();
   const [createdClasses, setCreatedClasses] = useState([]);

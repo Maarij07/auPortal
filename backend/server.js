@@ -4,8 +4,6 @@ const CORS=require('cors')
 const express = require('express')
 const mongoose = require('mongoose')
 const userRoutes = require('./routes/user')
-
-// express app
 const app = express()
 
 // middleware

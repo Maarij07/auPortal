@@ -29,8 +29,6 @@ export default function ZegoCLoud() {
       const appID = 170039570;
       const serverSecret = "f92e80b7cd3000108a278d350ad22f71";
       const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID,  randomID(5),  randomID(5));
-
-
      // Create instance object from Kit Token.
       const zp = ZegoUIKitPrebuilt.create(kitToken);
       // start the call
