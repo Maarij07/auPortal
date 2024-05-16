@@ -13,15 +13,14 @@ import { IoMdMore } from "react-icons/io";
 import { Menu, MenuItem } from '@mui/material';
 import { GoPencil } from "react-icons/go";
 import { MdDeleteOutline } from "react-icons/md";
-import { useSelector,useDispatch } from 'react-redux';
-import { SelectUsers,SelectUid,setUid } from '../../store/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { SelectUsers, SelectUid, setUid } from '../../store/userSlice';
 import { AiOutlinePieChart } from "react-icons/ai";
 
-
 const Main = ({ classData }) => {
-
+    // console.log(classData.call);
     const navigate = useNavigate();
-    const { loggedInMail,loggedInUser } = useLocalContext();
+    const { loggedInMail, loggedInUser,setCallClass,callClass } = useLocalContext();
     const [showInput, setShowInput] = useState(false);
     const [inputValue, setInputValue] = useState();
     const [file, setFile] = useState(null);
@@ -37,13 +36,13 @@ const Main = ({ classData }) => {
     const [className, setClassName] = useState(classData.className);
     const [courseName, setCourseName] = useState(classData.courseName);
     const [creditHours, setCreditHours] = useState(classData.creditHours);
-    const [assignmentWeightage,setAssignmentWeightage]=useState(0);
-    const [quizWeightage,setQuizWeightage]=useState(0);
-    const [midsWeightage,setMidsWeightage]=useState(0);
-    const [finalWeightage,setFinalWeightage] = useState(0);
-    const [projectWeightage,setProjectWeightage] = useState(0);
-    const [totalWeightage,setTotalWeightage] = useState(0);
-    const [disabled,setDisabled] = useState(true);
+    const [assignmentWeightage, setAssignmentWeightage] = useState(0);
+    const [quizWeightage, setQuizWeightage] = useState(0);
+    const [midsWeightage, setMidsWeightage] = useState(0);
+    const [finalWeightage, setFinalWeightage] = useState(0);
+    const [projectWeightage, setProjectWeightage] = useState(0);
+    const [totalWeightage, setTotalWeightage] = useState(0);
+    const [disabled, setDisabled] = useState(true);
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
@@ -104,30 +103,30 @@ const Main = ({ classData }) => {
             teacher: loggedInUser.displayName,
             id: id
         };
-        setDoc(childDoc, docData, {merge:true});
+        setDoc(childDoc, docData, { merge: true });
         setEditOpen(false);
     }
-    useEffect(()=>{
-        setTotalWeightage(parseInt(assignmentWeightage)+parseInt(quizWeightage)+parseInt(midsWeightage)+parseInt(finalWeightage)+ parseInt(projectWeightage))
-        console.log(totalWeightage);
-        if(totalWeightage==100)
+    useEffect(() => {
+        setTotalWeightage(parseInt(assignmentWeightage) + parseInt(quizWeightage) + parseInt(midsWeightage) + parseInt(finalWeightage) + parseInt(projectWeightage))
+        // console.log(totalWeightage);
+        if (totalWeightage == 100)
             setDisabled(false)
 
-    },[assignmentWeightage,quizWeightage,midsWeightage,finalWeightage,projectWeightage])
+    }, [assignmentWeightage, quizWeightage, midsWeightage, finalWeightage, projectWeightage])
 
-    const gradeClass=(e)=>{
+    const gradeClass = (e) => {
         e.preventDefault()
-        const id=classData.id;
+        const id = classData.id;
         const mainDoc = doc(db, `CreatedClasses/${loggedInMail}`);
         const childDoc = doc(mainDoc, `classes/${id}`);
-        const docData={
-            assignmentWeightage:assignmentWeightage,
-            quizWeightage:quizWeightage,
-            midsWeightage:midsWeightage,
-            finalWeightage:finalWeightage,
-            projectWeightage:projectWeightage
+        const docData = {
+            assignmentWeightage: assignmentWeightage,
+            quizWeightage: quizWeightage,
+            midsWeightage: midsWeightage,
+            finalWeightage: finalWeightage,
+            projectWeightage: projectWeightage
         }
-        setDoc(childDoc, docData, {merge:true});
+        setDoc(childDoc, docData, { merge: true });
         setGradeOpen(false);
     }
 
@@ -167,7 +166,8 @@ const Main = ({ classData }) => {
                         </div>
                         <div className="border-2 p-4 flex flex-col items-center gap-2 rounded-md sm:w-[14rem]">
                             <h1 className='text-md font-semibold'>AU Meet</h1>
-                            <Link to='/call' className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Join Now</Link>
+                            {classData.call ? <Link to={`${classData.call}`} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Join Now</Link>:  <Link to='/call' onClick={()=>setCallClass(classData.id)} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Create Now</Link>}
+
                         </div>
                     </div>
                     <div className="flex border-2 cursor-pointer sm:h-[8rem] items-center gap-4 p-4 rounded-md sm:w-[55rem]" onClick={() => setShowInput(true)}>

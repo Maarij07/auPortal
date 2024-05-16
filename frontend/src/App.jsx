@@ -65,6 +65,8 @@ function App() {
           ))}
           <Route index element={<Home />} />
           <Route path='/call' element={<ZegoCloud/>} />
+          <Route path='/test' element={<div><p>Hello G </p></div>}></Route>
+          <Route path='*' element={<div>Page not found</div>} />
         </Routes>
       </BrowserRouter>
     );

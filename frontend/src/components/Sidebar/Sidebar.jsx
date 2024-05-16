@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/userSlice';
 import { MdOutlineVideoCameraFront } from "react-icons/md";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const LogoutDialog = ({ onConfirm, onCancel }) => {
     return (
@@ -51,10 +52,12 @@ const Sidebar = () => {
                 <div className="flex items-center gap-2">
                     <IoHomeOutline />
                     <span>Home</span>
+                    {/* <Link to='/call?roomID=yl0dl'>hello </Link> */}
                 </div>
                 <div className="flex items-center gap-2">
                     <MdOutlineVideoCameraFront />
                     <span>Meetings</span>
+                    {/* <Link to='/call?roomID=hNYiz' >Hell2</Link> */}
                 </div>
                 <div className="flex items-center gap-2">
                     <IoSettingsOutline />

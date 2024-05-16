@@ -4,7 +4,7 @@ import { LiaGreaterThanSolid } from "react-icons/lia";
 import { Link } from 'react-router-dom';
 
 export default function ClassCard({ classData }) {
-    console.log(classData)
+    // console.log(classData)
     return (
         <div className="flex flex-col bg-[#f0f0f0] rounded-xl shadow-md shadow-black p-4 w-[25rem] h-[10rem] ">
             <div className="flex">

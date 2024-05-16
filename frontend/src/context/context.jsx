@@ -11,6 +11,7 @@ export function ContextProvider({children}){
     const [joinClassDialog, setJoinClassDialog] = useState(false);
     const [loggedInUser,setLoggedInUser] = useState(null);
     const [loggedInMail,setLoggedInMail] = useState(null);
+    const [callClass,setCallClass] = useState(null);
     
     const login =()=>{
         auth.signInWithPopup(provider);
@@ -42,7 +43,9 @@ export function ContextProvider({children}){
         loggedInMail,
         setLoggedInMail,
         loggedInUser,
-        setLoggedInUser
+        setLoggedInUser,
+        callClass,
+        setCallClass
      };
 
     return <AddContext.Provider value={value} >{children}</AddContext.Provider>;
