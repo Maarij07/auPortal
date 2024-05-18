@@ -16,6 +16,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { useSelector, useDispatch } from 'react-redux';
 import { SelectUsers, SelectUid, setUid } from '../../store/userSlice';
 import { AiOutlinePieChart } from "react-icons/ai";
+import { IoExitOutline } from "react-icons/io5";
 
 const Main = ({ classData }) => {
     // console.log(classData.call);
@@ -49,11 +50,13 @@ const Main = ({ classData }) => {
             setFile(e.target.files[0]);
         }
     }
-    const handleUpload = () => {
+    const handleUpload = (e) => {
+        e.preventDefault()
         console.log("reference created");
         const uploadFile = ref(storage, `files/${file.name}`);
         const uploadPost = uploadBytesResumable(uploadFile, file);
-
+        setShowInput(false);
+        console.log(showInput);
         uploadPost.on('state_changed', () => {
             // This function will be called multiple times during the upload process,
             // but we only need to handle the completion once, so we ignore it here.
@@ -83,6 +86,8 @@ const Main = ({ classData }) => {
                 console.error('Error getting download URL:', error);
             });
         });
+        
+
     };
 
     const handleDelete = async (e) => {
@@ -130,18 +135,23 @@ const Main = ({ classData }) => {
         setGradeOpen(false);
     }
 
+    const leaveClass=(e)=>{
+        e.preventDefault();
+        console.log("classs leaved")
+    }
+
     return (
         <div className="">
             <TopBar />
-            <div className="flex flex-col gap-6 items-center pt-[1.2rem]">
-                <div className="rounded-md bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white w-[70rem] h-[11rem] flex justify-between p-6">
+            <div className="flex flex-col gap-6 items-center pt-[1.2rem] w-full ">
+                <div className="rounded-md bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white w-[30rem] sm:w-[70rem] sm:h-[11rem] flex justify-between p-6">
                     <div className="">
-                        <h1 className='font-bold text-4xl'>{classData.courseName}</h1>
+                        <h1 className='font-bold text-3xl sm:text-4xl'>{classData.courseName}</h1>
                         <h1 className='mt-[0.2rem]'>{classData.className}  {classData.section}</h1>
                         <h2 className='font-bold text-sm mt-3'>Class Code:</h2>
                         <h2>{classData.id}</h2>
                     </div>
-                    {currentMail == classOwnerMail &&
+                    {currentMail == classOwnerMail ?
                         <div className="text-4xl cursor-pointer">
                             <IoMdMore onClick={handleClick} />
                             <Menu
@@ -155,12 +165,24 @@ const Main = ({ classData }) => {
                                 <MenuItem onClick={() => { setEditOpen(true) }}><GoPencil />&nbsp;Edit Class</MenuItem>
                                 <MenuItem onClick={handleDelete}> <MdDeleteOutline />&nbsp;Delete Class</MenuItem>
                             </Menu>
+                        </div>:
+                        <div className="text-4xl cursor-pointer">
+                            <IoMdMore onClick={handleClick} />
+                            <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                            >
+                                <MenuItem onClick={leaveClass} ><IoExitOutline />&nbsp;Leave Class</MenuItem>
+                            </Menu>
                         </div>
                     }
                 </div>
-                <div className="flex gap-4">
-                    <div className="flex sm:flex-col gap-2">
-                        <div className="border-2 p-4 rounded-md sm:w-[14rem]">
+                <div className="sm:flex-row flex-col gap-4">
+                    <div className="hidden sm:flex flex-col gap-2">
+                        <div className="sm:flex flex-col border-2 p-4 rounded-md sm:w-[14rem]">
                             <h1 className='text-md font-semibold'>Upcoming</h1>
                             <p>No Work Due</p>
                         </div>
@@ -170,7 +192,7 @@ const Main = ({ classData }) => {
 
                         </div>
                     </div>
-                    <div className="flex border-2 cursor-pointer sm:h-[8rem] items-center gap-4 p-4 rounded-md sm:w-[55rem]" onClick={() => setShowInput(true)}>
+                    <div className="flex border-2 cursor-pointer border-[#1174b1] py-6 h-[6rem] sm:h-[8rem] items-center gap-4 p-4 rounded-md w-[30rem] sm:w-[55rem]" onClick={() => setShowInput(true)}>
                         {showInput ?
                             <div className='w-full'>
                                 <TextField

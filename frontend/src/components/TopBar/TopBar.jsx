@@ -1,5 +1,5 @@
 import React from 'react'
-import img from "../../assets/logo.png";
+import img from "/logo2.png";
 import { Avatar } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { SelectUsers } from '../../store/userSlice';
@@ -27,17 +27,17 @@ const TopBar = () => {
     }, [currentUser]);
 
     return (
-        <div className="w-full flex border-b-2 justify-between px-10 h-[5rem]">
+        <div className="sm:w-full w-[35rem] flex border-b-2 justify-between px-2 sm:px-10 h-[5rem]">
             <Link to='/' className="flex items-center">
-                <img src={img} alt="" width={90} />
-                <p className='font-bold text-3xl'>AU Classroom</p>
+                <img src={img} className='sm:pt-4' alt="" width={100} />
+                <p className='font-bold text-2xl'>AU Classroom</p>
             </Link>
             <div className="flex items-center gap-2">
                 <div className="text-right">
-                    <p className='text-xl font-semibold'>{currentUser?.currentUser.name}</p>
+                    <p className='text-lg font-semibold'>{currentUser?.currentUser.name}</p>
                     <p>{studentId}</p>
                 </div>
-                <Avatar src={currentUser?.currentUser?.photo} sx={{ width: 48, height: 48 }} />
+                <Avatar src={currentUser?.currentUser?.photo} sx={{ width: 48, height: 48, "&.sm":{width:40,height:40} }} />
             </div>
         </div>
     )

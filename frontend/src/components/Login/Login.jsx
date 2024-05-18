@@ -87,11 +87,11 @@ export default function SignIn() {
                             {error}</div>}
                         <div className="flex sm:flex-col">
                             {/* <label className='font-bold '>Email Address:</label> */}
-                            <input className=' sm:w-[22rem] border-2 rounded-full py-2 px-4' name='email' required type="email" placeholder='Email' onChange={handleCredentials} />
+                            <input className='w-[22rem] border-2 rounded-full py-2 px-4' name='email' required type="email" placeholder='Email' onChange={handleCredentials} />
                         </div>
                         <div className="flex sm:flex-col">
                             {/* <label className='font-bold '>Password:</label> */}
-                            <input className=" sm:w-[22rem] border-2 rounded-full py-2 px-4" name='password' required type="password" placeholder='Password' onChange={handleCredentials} />
+                            <input className="w-[22rem] border-2 rounded-full py-2 px-4" name='password' required type="password" placeholder='Password' onChange={handleCredentials} />
                         </div>
                         <button onClick={handleLogin} type="submit" className=" w-[13.5rem] sm:w-[22rem] rounded-full py-2 font-bold bg-gradient-to-r from-[#032B44] via-[#205475] to-[#052F48] text-white">Log in</button>
                         <Link to='/forgotPassword' className='underline cursor-pointer font-medium text-blue-800 text-right'>Forgot Password?</Link>
@@ -99,7 +99,7 @@ export default function SignIn() {
                         <button className='flex gap-4 rounded-full items-center justify-center text-red-500 font-bold' onClick={handleGoogleLogin}><FaGoogle />Login With Google</button>
                     </form>
                     <div className="mt-4">
-                        <p className="text-[0.7rem] sm:text-[1.2rem]">Don't have an account? <Link className='text-blue-800 font-semibold' to="/signup"> Signup</Link> </p>
+                        <p className="text-[0.9rem] sm:text-[1.2rem]">Don't have an account? <Link className='text-blue-800 font-semibold' to="/signup"> Signup</Link> </p>
                     </div>
                 </div>
             </div>
