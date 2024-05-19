@@ -76,7 +76,7 @@ const Home = ({ children }) => {
     return (
         <div className="flex">
             <Sidebar />
-            <div className="h-screen flex sm:ml-[10.6rem] w-[80rem] text-black">
+            <div className="h-screen flex w-[80rem] text-black">
                 <div className="">
                     <Navbar />
                     <CreateClass />

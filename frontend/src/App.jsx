@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { SelectUsers } from './store/userSlice';
-import { ClassCard, Home, Login, Signup ,ZegoCloud,ForgotPassword} from './components/index';
+import { ClassCard, Home, Login, Signup ,ZegoCloud,ForgotPassword,UserProfile} from './components/index';
 import { useLocalContext } from './context/context';
 import { onSnapshot, doc, collection } from 'firebase/firestore';
 import db from './lib/firebase';
@@ -65,7 +65,7 @@ function App() {
           ))}
           <Route index element={<Home />} />
           <Route path='/call' element={<ZegoCloud/>} />
-          <Route path='/test' element={<div><p>Hello G </p></div>}></Route>
+          <Route path='/settings' element={<UserProfile/>}></Route>
           <Route path='*' element={<div>Page not found</div>} />
         </Routes>
       </BrowserRouter>

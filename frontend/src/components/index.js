@@ -12,3 +12,5 @@ export {default as Main} from './Main/Main.jsx';
 export {default as TopBar} from './TopBar/TopBar.jsx';
 export {default as ZegoCloud} from './zegoCloud/zegoCloud.jsx';
 export {default as ForgotPassword} from './ForgotPassword/ForgotPassword.jsx';
+export {default as Announcements} from './Announcements/Announcements.jsx';
+export {default as UserProfile} from './UserProfile/UserProfile.jsx';

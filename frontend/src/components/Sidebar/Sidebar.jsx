@@ -44,25 +44,25 @@ const Sidebar = () => {
     }
 
     return (
-        <div className="flex flex-col gap-10 flex-grow bg-gradient-to-b from-[#032B44] via-[#205475] to-[#052F48] h-screen w-[11rem] text-white items-center justify-around text-xl fixed">
+        <div className="hidden sm:flex flex-col gap-10 flex-grow bg-gradient-to-b from-[#032B44] via-[#205475] to-[#052F48] h-screen w-[11rem] text-white relative left-0 items-center justify-around text-xl ">
             <div className="">
                 <img src="/logo2.png" alt="logo" width={300} />
             </div>
             <div className="flex flex-col gap-6">
-                <div className="flex items-center gap-2">
+                <Link to='/' className="flex items-center gap-2">
                     <IoHomeOutline />
                     <span>Home</span>
                     {/* <Link to='/call?roomID=yl0dl'>hello </Link> */}
-                </div>
+                </Link>
                 <div className="flex items-center gap-2">
                     <MdOutlineVideoCameraFront />
-                    <span>Meetings</span>
+                    <span>MarkSheets</span>
                     {/* <Link to='/call?roomID=hNYiz' >Hell2</Link> */}
                 </div>
-                <div className="flex items-center gap-2">
+                <Link to='/settings' className="flex items-center gap-2">
                     <IoSettingsOutline />
                     <span>Settings</span>
-                </div>
+                </Link>
             </div>
             <div className="flex items-center gap-2" onClick={handleLogout}>
                 <RiLogoutBoxLine />

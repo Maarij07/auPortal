@@ -17,11 +17,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { SelectUsers, SelectUid, setUid } from '../../store/userSlice';
 import { AiOutlinePieChart } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
+import Announcements from '../Announcements/Announcements';
 
 const Main = ({ classData }) => {
     // console.log(classData.call);
     const navigate = useNavigate();
-    const { loggedInMail, loggedInUser,setCallClass,callClass } = useLocalContext();
+    const { loggedInMail, loggedInUser, setCallClass, callClass } = useLocalContext();
     const [showInput, setShowInput] = useState(false);
     const [inputValue, setInputValue] = useState();
     const [file, setFile] = useState(null);
@@ -44,6 +45,7 @@ const Main = ({ classData }) => {
     const [projectWeightage, setProjectWeightage] = useState(0);
     const [totalWeightage, setTotalWeightage] = useState(0);
     const [disabled, setDisabled] = useState(true);
+    const [postCount, setPostCount] = useState(0)
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
@@ -69,7 +71,7 @@ const Main = ({ classData }) => {
 
                 // Now you can proceed with storing the data to Firestore
                 const mainDoc = doc(db, 'announcments/classes');
-                const childDoc = doc(mainDoc, `posts/${classData.id}`);
+                const childDoc = doc(mainDoc, `${classData.id}/${postCount}`);
                 const time = Timestamp.fromDate(new Date());
                 const docData = {
                     timestamp: time.seconds,
@@ -79,6 +81,7 @@ const Main = ({ classData }) => {
                 };
                 setDoc(childDoc, docData).then(() => {
                     console.log('Document successfully written!');
+                    setPostCount((count) => count += 1)
                 }).catch((error) => {
                     console.error('Error writing document:', error);
                 });
@@ -86,7 +89,7 @@ const Main = ({ classData }) => {
                 console.error('Error getting download URL:', error);
             });
         });
-        
+
 
     };
 
@@ -135,23 +138,40 @@ const Main = ({ classData }) => {
         setGradeOpen(false);
     }
 
-    const leaveClass=(e)=>{
+    const leaveClass = async (e) => {
         e.preventDefault();
-        console.log("classs leaved")
-    }
+
+        // Check if classData is defined and has an id property
+        if (classData && classData.id) {
+            const id = classData.id;
+            const mainDoc = doc(db, `JoinedClasses/${loggedInMail}`);
+            const childDoc = doc(mainDoc, `classes/${id}`);
+
+            // Wrap deleteDoc in a try-catch block to handle errors
+            try {
+                await deleteDoc(doc(db, childDoc));
+                console.log("Class left successfully");
+            } catch (error) {
+                console.error("Error leaving class:", error);
+            }
+        } else {
+            console.error("classData is not defined or does not have an id property");
+        }
+    };
+
 
     return (
-        <div className="">
+        <div className="sm:w-full w-[35rem]">
             <TopBar />
-            <div className="flex flex-col gap-6 items-center pt-[1.2rem] w-full ">
+            <div className="flex mt-[6rem] flex-col gap-6  items-center pt-[1.2rem] w-full ">
                 <div className="rounded-md bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white w-[30rem] sm:w-[70rem] sm:h-[11rem] flex justify-between p-6">
-                    <div className="">
+                    <div>
                         <h1 className='font-bold text-3xl sm:text-4xl'>{classData.courseName}</h1>
-                        <h1 className='mt-[0.2rem]'>{classData.className}  {classData.section}</h1>
+                        <h1 className='mt-[0.2rem]'>{classData.className} {classData.section}</h1>
                         <h2 className='font-bold text-sm mt-3'>Class Code:</h2>
                         <h2>{classData.id}</h2>
                     </div>
-                    {currentMail == classOwnerMail ?
+                    {currentMail === classOwnerMail ? (
                         <div className="text-4xl cursor-pointer">
                             <IoMdMore onClick={handleClick} />
                             <Menu
@@ -161,62 +181,69 @@ const Main = ({ classData }) => {
                                 open={Boolean(anchorEl)}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={() => { setGradeOpen(true) }}><AiOutlinePieChart />&nbsp;Grading</MenuItem>
-                                <MenuItem onClick={() => { setEditOpen(true) }}><GoPencil />&nbsp;Edit Class</MenuItem>
-                                <MenuItem onClick={handleDelete}> <MdDeleteOutline />&nbsp;Delete Class</MenuItem>
-                            </Menu>
-                        </div>:
-                        <div className="text-4xl cursor-pointer">
-                            <IoMdMore onClick={handleClick} />
-                            <Menu
-                                id="simple-menu"
-                                anchorEl={anchorEl}
-                                keepMounted
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
-                            >
-                                <MenuItem onClick={leaveClass} ><IoExitOutline />&nbsp;Leave Class</MenuItem>
+                                <MenuItem onClick={() => setGradeOpen(true)}><AiOutlinePieChart />&nbsp;Grading</MenuItem>
+                                <MenuItem onClick={() => setEditOpen(true)}><GoPencil />&nbsp;Edit Class</MenuItem>
+                                <MenuItem onClick={handleDelete}><MdDeleteOutline />&nbsp;Delete Class</MenuItem>
                             </Menu>
                         </div>
-                    }
+                    ) : (
+                        <div className="text-4xl cursor-pointer">
+                            <IoMdMore onClick={handleClick} />
+                            <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                            >
+                                <MenuItem onClick={leaveClass}><IoExitOutline />&nbsp;Leave Class</MenuItem>
+                            </Menu>
+                        </div>
+                    )}
                 </div>
-                <div className="sm:flex-row flex-col gap-4">
-                    <div className="hidden sm:flex flex-col gap-2">
-                        <div className="sm:flex flex-col border-2 p-4 rounded-md sm:w-[14rem]">
+                <div className="flex flex-col sm:flex-row sm:px-[8rem] gap-4 w-full">
+                    <div className="flex flex-col gap-2 sm:w-[14rem]">
+                        <div className="border-2 p-4 rounded-md">
                             <h1 className='text-md font-semibold'>Upcoming</h1>
                             <p>No Work Due</p>
                         </div>
-                        <div className="border-2 p-4 flex flex-col items-center gap-2 rounded-md sm:w-[14rem]">
+                        <div className="border-2 p-4 flex flex-col items-center gap-2 rounded-md">
                             <h1 className='text-md font-semibold'>AU Meet</h1>
-                            {classData.call ? <Link to={`${classData.call}`} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Join Now</Link>:  <Link to='/call' onClick={()=>setCallClass(classData.id)} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Create Now</Link>}
-
+                            {classData.call ? (
+                                <Link to={`${classData.call}`} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Join Now</Link>
+                            ) : (
+                                <Link to='/call' onClick={() => setCallClass(classData.id)} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Create Now</Link>
+                            )}
                         </div>
                     </div>
-                    <div className="flex border-2 cursor-pointer border-[#1174b1] py-6 h-[6rem] sm:h-[8rem] items-center gap-4 p-4 rounded-md w-[30rem] sm:w-[55rem]" onClick={() => setShowInput(true)}>
-                        {showInput ?
-                            <div className='w-full'>
-                                <TextField
-                                    multiline
-                                    label="Announce Something to your class"
-                                    variant='filled'
-                                    value={inputValue}
-                                    onChange={(e) => setInputValue(e.target.value)}
-                                    className='w-full p-4'
-                                />
-                                <div className="flex justify-between sm:mt-[1.2rem]">
-                                    <input onChange={handleChange} type="file" color='primary' variant="outlined" />
-                                    <div className="flex">
-                                        <Button onClick={() => setShowInput(false)}>Cancel</Button>
-                                        <Button onClick={handleUpload} color='primary' variant='contained'>Post</Button>
+                    <div className="flex flex-col gap-4 overflow-hidden">
+                        <div className="flex-grow flex border-2 cursor-pointer border-[#1174b1] py-6 h-[4rem] sm:h-[8rem] items-center gap-4 p-4 rounded-md shadow-md shadow-black" onClick={() => setShowInput(true)}>
+                            {showInput ? (
+                                <div className='w-full'>
+                                    <TextField
+                                        multiline
+                                        label="Announce Something to your class"
+                                        variant='filled'
+                                        value={inputValue}
+                                        onChange={(e) => setInputValue(e.target.value)}
+                                        className='w-full p-4'
+                                    />
+                                    <div className="flex justify-between sm:mt-[1.2rem]">
+                                        <input onChange={handleChange} type="file" color='primary' variant="outlined" />
+                                        <div className="flex">
+                                            <Button onClick={() => setShowInput(false)}>Cancel</Button>
+                                            <Button onClick={handleUpload} color='primary' variant='contained'>Post</Button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div> :
-                            (
+                            ) : (
                                 <>
                                     <Avatar />
                                     <p>Announce Something to your Class</p>
                                 </>
                             )}
+                        </div>
+                        <div className="w-full flex flex-col gap-2 sm:w-[53rem] "><Announcements classData={classData} /></div>
                     </div>
                 </div>
             </div>
@@ -225,7 +252,6 @@ const Main = ({ classData }) => {
                 onClose={() => setEditOpen(false)}
                 aria-labelledby='dialog-title'
             >
-                {/* <DialogTitle id="dialog-title">Edit Class</DialogTitle> */}
                 <div className="form p-4">
                     <h2 className='font-bold'>Edit Class</h2>
                     <div className="p-4 flex flex-col gap-2">
@@ -245,9 +271,8 @@ const Main = ({ classData }) => {
                 onClose={() => setGradeOpen(false)}
                 aria-labelledby='dialog-title'
             >
-                {/* <DialogTitle id="dialog-title">Edit Class</DialogTitle> */}
                 <div className="form p-4">
-                    <h2 className='font-bold'>Grading System (Total 100%) </h2>
+                    <h2 className='font-bold'>Grading System (Total 100%)</h2>
                     <div className="p-4 flex flex-col gap-2">
                         <TextField id="filled-basic" value={assignmentWeightage} onChange={(e) => setAssignmentWeightage(e.target.value)} label="Assignment Weightage(%)" variant='filled' className='w-[30rem]' />
                         <TextField id="filled-basic" value={quizWeightage} onChange={(e) => setQuizWeightage(e.target.value)} label="Quiz Weightage(%)" variant='filled' className='w-[30rem]' />
@@ -263,7 +288,7 @@ const Main = ({ classData }) => {
                 </div>
             </Dialog>
         </div>
-    )
+    );
 }
 
 export default Main
