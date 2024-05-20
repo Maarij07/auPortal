@@ -15,6 +15,7 @@ export default function Classes() {
       const classesCollectionRef = collection(db, `CreatedClasses/${loggedInMail}/classes`);
       const unsubscribe = onSnapshot(classesCollectionRef, (querySnapshot) => {
         const documentsData = [];
+        // console.log(querySnapshot.docs);
         querySnapshot.forEach((doc) => {
           documentsData.push({
             id: doc.id,
