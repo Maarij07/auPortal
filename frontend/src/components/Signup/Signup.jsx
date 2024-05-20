@@ -4,11 +4,9 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../store/userSlice';
 import { useAuth0 } from '@auth0/auth0-react';
 import { FaGoogle } from "react-icons/fa";
-import db, { auth } from '../../lib/firebase';
+import { auth } from '../../lib/firebase';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
 import { Link } from 'react-router-dom';
-import { doc, setDoc } from 'firebase/firestore';
-
 
 export default function Signup() {
     const dispatch = useDispatch();
@@ -41,44 +39,49 @@ export default function Signup() {
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 const email = error.customData;
-                const credential = GoogleAuthProvider.credentialFromError(error);
+                const credential = GoogleAuthProvider.credentialFormError(error);
             });
     };
 
-    const handleCredentials = (e) => {
-        setUserCredentials({ ...userCredentials, [e.target.name]: e.target.value });
-    };
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            dispatch(setUser({ id: user.uid, email: user.email }));
+        }
+        else {
+            dispatch(setUser(null))
+        }
+    })
 
-    const handleSignup = async (e) => {
+    const handleCredentials = (e) => {
+        setUserCredentials({ ...userCredentials, [e.target.name]: e.target.value })
+    }
+
+    const handleSignup = (e) => {
         e.preventDefault();
-        setError("");
+        setError("")
         const email = userCredentials.email;
 
         if (!checkEducationalEmail(email)) {
             setError("Please use an educational email");
         } else {
-            try {
-                await createUserWithEmailAndPassword(auth, userCredentials.email, userCredentials.password);
-                const mainDoc = doc(db, `Users/${userCredentials.email}`);
-                const docData = {
-                    Email: userCredentials.email,
-                    userId: userCredentials.studentId,
-                    name: userCredentials.userName,
-                    password: userCredentials.password
-                };
-                await setDoc(mainDoc, docData);
-                setUserCredentials({});
-            } catch (error) {
-                setError(error.message);
-            }
+            createUserWithEmailAndPassword(auth, userCredentials.email, userCredentials.password)
+                .catch((error) => {
+                    setError(error.message)
+                });
         }
     };
 
     return (
+        // <div className="flex">
+        //     <div className="w-1/2 flex items-center justify-center">
+        //         <img src={'/banner.png'} alt="AIR" className='w-full h-full object-cover' />
+        //     </div>
+
+        // </div>
         <div className="flex items-center justify-center">
-            <div className="h-screen flex flex-col items-center justify-center gap-[2rem] w-1/2">
+            <div className="h-screen flex flex-col items-center justify-center gap-[2rem] ">
                 <div className=" flex flex-col items-center">
-                    <h3 className='font-extrabold font-["Open_Sans"] w-[1.8rem] sm:text-[3.3rem] text-[#032B44]'>AU Classroom</h3>
+                    <h3 className='font-extrabold font-["Open_Sans"] text-[1.8rem] sm:text-[3.3rem] text-[#032B44]'>AU Classroom</h3>
                     <h2 className='font-bold text-[1.5rem] sm:text-4xl text-black opacity-90'>Sign Up </h2>
                 </div>
                 <form className='flex flex-col gap-3 w-[22rem]'>
@@ -88,7 +91,7 @@ export default function Signup() {
                     <div className="flex gap-4 sm:w-[21.6rem] justify-between">
                         <div className="">
                             {/* <label className='font-bold '>User Name:</label> */}
-                            <input className='border-2 rounded-full py-2 px-4 w-[10.5rem]' name='userName' required type="text" placeholder='User Name' onChange={(e) => { handleCredentials(e) }} />
+                            <input className='border-2 rounded-full py-2 px-4 w-[10.5rem] ' name='userName' required type="text" placeholder='User Name' onChange={(e) => { handleCredentials(e) }} />
                         </div>
                         <div className="">
                             {/* <label className='font-bold '>Student ID:</label> */}
@@ -96,20 +99,20 @@ export default function Signup() {
                         </div>
                     </div>
 
-                    <div className="flex sm:flex-col">
+                    <div className="flex items-center justify-center sm:flex-col">
                         {/* <label className='font-bold '>Email Address:</label> */}
-                        <input className='border-2 rounded-full py-2 px-4' name='email' required type="email" placeholder='Email' onChange={(e) => { handleCredentials(e) }} />
+                        <input className='border-2 rounded-full  w-[22rem] py-2 px-4' name='email' required type="email" placeholder='Email' onChange={(e) => { handleCredentials(e) }} />
                     </div>
                     <div className="flex sm:flex-col">
                         {/* <label className='font-bold '>Password:</label> */}
-                        <input className="border-2 rounded-full py-2 px-4" name='password' required type="password" placeholder='Password' onChange={(e) => { handleCredentials(e) }} />
+                        <input className="border-2 rounded-full  w-[22rem] py-2 px-4" name='password' required type="password" placeholder='Password' onChange={(e) => { handleCredentials(e) }} />
                     </div>
                     <button onClick={(e) => { handleSignup(e) }} type="submit" className="rounded-full py-2 font-bold  bg-gradient-to-r from-[#032B44] via-[#205475] to-[#052F48] text-white">SIGN UP</button>
                     <p className='mx-auto text-gray-500 text-sm sm:text-lg font-bold'>OR</p>
-                    <button className='flex gap-4 rounded-full items-center justify-center text-red-500 font-bold' onClick={handleGoogleLogin}><FaGoogle />Login With Google</button>
+                    <button className='flex gap-4 text-lg rounded-full items-center justify-center text-red-500 font-bold' onClick={handleGoogleLogin}><FaGoogle />Login With Google</button>
                 </form>
-                <div className="mt-4">
-                    <p>Already have an account? <Link className='text-blue-800 font-semibold text-decoration-line:underline' to="/"> Login</Link> </p>
+                <div className=" text-sm ">
+                    <p>Already have an account? <Link className='text-blue-800 font-semibold text-decoration-line: underline'  to="/"> Login</Link> </p>
                 </div>
             </div>
         </div>

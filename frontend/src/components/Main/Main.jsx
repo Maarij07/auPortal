@@ -58,7 +58,7 @@ const Main = ({ classData }) => {
         const uploadFile = ref(storage, `files/${file.name}`);
         const uploadPost = uploadBytesResumable(uploadFile, file);
         setShowInput(false);
-        console.log(showInput);
+        // console.log(showInput);
         uploadPost.on('state_changed', () => {
             // This function will be called multiple times during the upload process,
             // but we only need to handle the completion once, so we ignore it here.
@@ -147,10 +147,10 @@ const Main = ({ classData }) => {
             const mainDoc = doc(db, `JoinedClasses/${loggedInMail}`);
             const childDoc = doc(mainDoc, `classes/${id}`);
 
-            // Wrap deleteDoc in a try-catch block to handle errors
             try {
-                await deleteDoc(doc(db, childDoc));
+                deleteDoc(childDoc);
                 console.log("Class left successfully");
+                navigate('/');
             } catch (error) {
                 console.error("Error leaving class:", error);
             }

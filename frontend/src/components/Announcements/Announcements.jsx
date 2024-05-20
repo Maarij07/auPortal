@@ -12,7 +12,7 @@ const Announcements = ({ classData }) => {
             const announcementRef = collection(db, `announcments/classes/${classData.id}`);
             const unsubscribe = onSnapshot(announcementRef, (querySnapshot) => {
                 const documentsData = [];
-                console.log(querySnapshot);
+                // console.log(querySnapshot);
                 querySnapshot.forEach((doc) => {
                     documentsData.push({
                         id: doc.id,
@@ -21,7 +21,7 @@ const Announcements = ({ classData }) => {
                 });
                 setAnnouncement(documentsData);
             });
-            console.log(announcement)
+            // console.log(announcement)
             return () => unsubscribe();
         }
     }, [classData]);
