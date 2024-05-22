@@ -50,6 +50,7 @@ const Main = ({ classData }) => {
     const [disabled, setDisabled] = useState(true);
     const [postCount, setPostCount] = useState(0)
     const [assignmentEl, setAssignmentEl] = useState(null);
+    const [callLink,setCallLink]=useState(null);
 
     const handleCloseAssignment = () => setAssignmentEl(null);
 
@@ -184,11 +185,12 @@ const Main = ({ classData }) => {
 
 
     useEffect(() => {
-        const callRef = collection(db, `Calls`);
+        const callRef = collection(db, `Calls/${classData.id}/callLink`);
         const unsubscribe = onSnapshot(callRef, (querySnapshot) => {
             const documentsData = [];
-            console.log(querySnapshot.docs);
+            setCallLink(querySnapshot.docs[0]._document.data.value.mapValue.fields.call.stringValue );
             querySnapshot.forEach((doc) => {
+                // console.log(doc[0])
                 documentsData.push({
                     id: doc.id,
                     ...doc.data()
@@ -288,7 +290,7 @@ const Main = ({ classData }) => {
                         <div className="border-2 p-4 flex flex-col items-center gap-2 rounded-md">
                             <h1 className='text-md font-semibold'>AU Meet</h1>
                             {classData.call ? (
-                                <Link onClick={() => setCallClass(classData.id)} to={`${classData.call}`} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Join Now</Link>
+                                <Link onClick={() => setCallClass(classData.id)} to={`${callLink}`} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Join Now</Link>
                             ) : (
                                 <Link to='/call' onClick={() => setCallClass(classData.id)} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Create Now</Link>
                             )}

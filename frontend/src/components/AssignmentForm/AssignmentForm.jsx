@@ -55,11 +55,14 @@ const AssignmentForm = () => {
                                     <form className='flex flex-col gap-4 w-[17rem]' >
                                         <div className="flex flex-col ">
                                             <label>Deadline</label>
-                                            <input className='bg-[#FFFAFA] opacity-30 h-[2rem]' type="text" />
+                                            <input className='bg-[#FFFAFA] opacity-30 h-[2rem]' type="date" />
                                         </div>
-                                        <div className="flex flex-col ">
+                                        <div className="flex text-black flex-col ">
                                             <label>Type</label>
-                                            <input className='bg-[#FFFAFA] opacity-30 h-[2rem]' type="text" />
+                                            <select id="type" class="bg-[#FFFAFA] opacity-30 h-[2rem]">
+                                                <option value="individual" selected>Individual</option>
+                                                <option value="group">Group</option>
+                                            </select>
                                         </div>
                                         <div className="flex flex-col ">
                                             <label>Upload File</label>

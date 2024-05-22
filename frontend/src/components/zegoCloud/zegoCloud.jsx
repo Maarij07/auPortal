@@ -58,6 +58,7 @@ export default function ZegoCLoud() {
 
 
     const mainDoc = doc(db, `Calls/${callClass}`);
+    const childDoc= doc(mainDoc, 'callLink/byOwner');
     function getTextStartingWithCall(url) {
       if (url && url.includes("/call")) {
         // If the URL contains "/call", return the substring starting from "/call"
@@ -71,7 +72,7 @@ export default function ZegoCLoud() {
     const callLink = getTextStartingWithCall(sentence);
     console.log(callClass);
 
-    await setDoc(mainDoc,{
+    await setDoc(childDoc,{
       call: callLink
     })
 
