@@ -22,8 +22,10 @@ const createClass = () => {
             creditHours: creditHours,
             courseName: courseName,
             teacher: loggedInUser.displayName,
-            call:null,
-            id: id
+            id: id,
+            assignmentNo:0,
+            quizNo:0,
+            posts:0
         };
         setDoc(childDoc, docData);
         setCreateClassDialog(false);

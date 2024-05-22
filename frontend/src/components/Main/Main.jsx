@@ -48,11 +48,16 @@ const Main = ({ classData }) => {
     const [projectWeightage, setProjectWeightage] = useState(0);
     const [totalWeightage, setTotalWeightage] = useState(0);
     const [disabled, setDisabled] = useState(true);
-    const [postCount, setPostCount] = useState(0)
+    const [postCount, setPostCount] = useState(classData.posts);
     const [assignmentEl, setAssignmentEl] = useState(null);
-    const [callLink,setCallLink]=useState(null);
+    const [callLink, setCallLink] = useState(null);
+    const [assignmentCount,setAssignmentCount] =useState(classData.assignmentNo);
+    const [quizCount,setQuizCount] = useState(classData.quizNo);
 
+
+ 
     const handleCloseAssignment = () => setAssignmentEl(null);
+    console.log(postCount);
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
@@ -70,6 +75,7 @@ const Main = ({ classData }) => {
         const uploadFile = ref(storage, `files/${file.name}`);
         const uploadPost = uploadBytesResumable(uploadFile, file);
         setShowInput(false);
+
 
         uploadPost.on(
             'state_changed',
@@ -102,9 +108,16 @@ const Main = ({ classData }) => {
                             .catch((error) => {
                                 console.error('Error writing document:', error);
                             });
-
                         return newCount;  // Return the updated count
                     });
+                    const id = classData.id;
+                    const mainDoc = doc(db, `CreatedClasses/${loggedInMail}`);
+                    const childDoc = doc(mainDoc, `classes/${id}`);
+                    const docData = {
+                        posts: postCount
+                    }
+                    setDoc(childDoc, docData, { merge: true });
+
                 } catch (error) {
                     console.error('Error getting download URL:', error);
                 }
@@ -159,6 +172,11 @@ const Main = ({ classData }) => {
             projectWeightage: projectWeightage
         }
         setDoc(childDoc, docData, { merge: true });
+        setAssignmentWeightage(0);
+        setQuizWeightage(0);
+        setMidsWeightage(0);
+        setFinalWeightage(0);
+        setProjectWeightage(0);
         setGradeOpen(false);
     }
 
@@ -188,7 +206,7 @@ const Main = ({ classData }) => {
         const callRef = collection(db, `Calls/${classData.id}/callLink`);
         const unsubscribe = onSnapshot(callRef, (querySnapshot) => {
             const documentsData = [];
-            setCallLink(querySnapshot.docs[0]._document.data.value.mapValue.fields.call.stringValue );
+            setCallLink(querySnapshot.docs[0]._document.data.value.mapValue.fields.call.stringValue);
             querySnapshot.forEach((doc) => {
                 // console.log(doc[0])
                 documentsData.push({

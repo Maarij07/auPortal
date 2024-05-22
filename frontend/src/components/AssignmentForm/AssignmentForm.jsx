@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLocalContext } from '../../context/context'
 import { Button, Dialog, Slide } from '@mui/material';
 import { Close } from '@mui/icons-material';
@@ -10,6 +10,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const AssignmentForm = () => {
+
+    const [formAssignmentNo, setFormAssignmentNo] = useState('');
+    const [formAssignmentName, setFormAssignmentName] = useState('');
+    const [formMarks, setFormMarks] = useState(0);
+    const [formDeadline, setFormDeadline] = useState(new Date());
+    const [formType, setFormType] = useState('individual');
+    const [assignmentFile, setAssignmentFile] = useState(null);
+
     const { assignmentDialog, setAssignmentDialog } = useLocalContext();
     return (
         <div className="">
@@ -33,15 +41,15 @@ const AssignmentForm = () => {
                                     <form className='flex flex-col gap-4 w-[23rem]' >
                                         <div className="flex flex-col ">
                                             <label>Assignment Number</label>
-                                            <input className='bg-transparent border-b' type="text" />
+                                            <input value={formAssignmentNo} onChange={(e) => setFormAssignmentNo(e.target.value)} className='bg-transparent border-b' type="text" />
                                         </div>
                                         <div className="flex flex-col ">
                                             <label>Assignment Name</label>
-                                            <input className='bg-transparent border-b' type="text" />
+                                            <input value={formAssignmentName} onChange={(e) => setFormAssignmentName(e.target.value)} className='bg-transparent border-b' type="text" />
                                         </div>
                                         <div className="flex flex-col ">
                                             <label>Marks</label>
-                                            <input className='bg-transparent border-b' type="text" />
+                                            <input value={formMarks} onChange={(e) => setFormMarks(e.target.value)} className='bg-transparent border-b' type="text" />
                                         </div>
                                     </form>
                                 </div>
@@ -55,13 +63,13 @@ const AssignmentForm = () => {
                                     <form className='flex flex-col gap-4 w-[17rem]' >
                                         <div className="flex flex-col ">
                                             <label>Deadline</label>
-                                            <input className='bg-[#FFFAFA] opacity-30 h-[2rem]' type="date" />
+                                            <input value={formDeadline} onChange={(e) => setFormDeadline(e.target.value)} className='bg-[#FFFAFA] opacity-30 h-[2rem]' type="date" />
                                         </div>
                                         <div className="flex text-black flex-col ">
                                             <label>Type</label>
-                                            <select id="type" class="bg-[#FFFAFA] opacity-30 h-[2rem]">
-                                                <option value="individual" selected>Individual</option>
-                                                <option value="group">Group</option>
+                                            <select id="type" class="bg-[#FFFAFA] opacity-30 h-[2rem]" onChange={(e)=>setFormType(e.target.value)}>
+                                                <option value="individual" selected={formType === 'individual'}>Individual</option>
+                                                <option value="group" selected={formType === 'group'}>Group</option>
                                             </select>
                                         </div>
                                         <div className="flex flex-col ">
