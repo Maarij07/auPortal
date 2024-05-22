@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { storage } from '../../lib/firebase';
 import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from 'firebase/storage';
 import { useLocalContext } from '../../context/context';
-import { collection, deleteDoc, doc, setDoc, Timestamp, addDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, setDoc, Timestamp, addDoc, onSnapshot } from 'firebase/firestore';
 import db from '../../lib/firebase';
 import QRCode from 'qrcode.react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -18,11 +18,14 @@ import { SelectUsers, SelectUid, setUid } from '../../store/userSlice';
 import { AiOutlinePieChart } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
 import Announcements from '../Announcements/Announcements';
+import { FaPlus } from "react-icons/fa6";
+import AssignmentForm from '../AssignmentForm/AssignmentForm';
+import {Tabs} from '../index';
 
 const Main = ({ classData }) => {
     // console.log(classData.call);
     const navigate = useNavigate();
-    const { loggedInMail, loggedInUser, setCallClass, callClass } = useLocalContext();
+    const { loggedInMail, loggedInUser, setCallClass, callClass, setAssignmentDialog } = useLocalContext();
     const [showInput, setShowInput] = useState(false);
     const [inputValue, setInputValue] = useState();
     const [file, setFile] = useState(null);
@@ -46,6 +49,9 @@ const Main = ({ classData }) => {
     const [totalWeightage, setTotalWeightage] = useState(0);
     const [disabled, setDisabled] = useState(true);
     const [postCount, setPostCount] = useState(0)
+    const [assignmentEl,setAssignmentEl]=useState(null);
+
+    const handleCloseAssignment=()=> setAssignmentEl(null);
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
@@ -53,45 +59,62 @@ const Main = ({ classData }) => {
         }
     }
     const handleUpload = (e) => {
-        e.preventDefault()
-        console.log("reference created");
+        e.preventDefault();
+        if (!file) {
+            console.error("No file selected for upload");
+            return;
+        }
+
+        console.log("Reference created");
         const uploadFile = ref(storage, `files/${file.name}`);
         const uploadPost = uploadBytesResumable(uploadFile, file);
         setShowInput(false);
-        // console.log(showInput);
-        uploadPost.on('state_changed', () => {
-            // This function will be called multiple times during the upload process,
-            // but we only need to handle the completion once, so we ignore it here.
-        }, (error) => {
-            console.error('Error uploading file:', error);
-        }, () => {
-            // The upload is complete, now we can get the download URL
-            getDownloadURL(uploadPost.snapshot.ref).then((downloadURL) => {
-                console.log('File available at', downloadURL);
 
-                // Now you can proceed with storing the data to Firestore
-                const mainDoc = doc(db, 'announcments/classes');
-                const childDoc = doc(mainDoc, `${classData.id}/${postCount}`);
-                const time = Timestamp.fromDate(new Date());
-                const docData = {
-                    timestamp: time.seconds,
-                    imageUrl: downloadURL,
-                    text: inputValue,
-                    sender: loggedInMail
-                };
-                setDoc(childDoc, docData).then(() => {
-                    console.log('Document successfully written!');
-                    setPostCount((count) => count += 1)
-                }).catch((error) => {
-                    console.error('Error writing document:', error);
-                });
-            }).catch((error) => {
-                console.error('Error getting download URL:', error);
-            });
-        });
+        uploadPost.on(
+            'state_changed',
+            null,  // We ignore progress updates for now
+            (error) => {
+                console.error('Error uploading file:', error);
+            },
+            async () => {
+                try {
+                    const downloadURL = await getDownloadURL(uploadPost.snapshot.ref);
+                    console.log('File available at', downloadURL);
 
+                    // Use setPostCount to update the state correctly
+                    setPostCount((prevCount) => {
+                        const newCount = prevCount + 1;
+                        const mainDoc = doc(db, 'announcments/classes');
+                        const childDoc = doc(mainDoc, `${classData.id}/${newCount}`);
+                        const time = Timestamp.fromDate(new Date());
+                        const docData = {
+                            timestamp: time.seconds,
+                            imageUrl: downloadURL,
+                            text: inputValue,
+                            sender: loggedInMail
+                        };
 
+                        setDoc(childDoc, docData)
+                            .then(() => {
+                                console.log('Document successfully written!');
+                            })
+                            .catch((error) => {
+                                console.error('Error writing document:', error);
+                            });
+
+                        return newCount;  // Return the updated count
+                    });
+                } catch (error) {
+                    console.error('Error getting download URL:', error);
+                }
+            }
+        );
     };
+
+    const handleAssignment=()=>{
+        handleCloseAssignment();
+        setAssignmentDialog(true);
+    }
 
     const handleDelete = async (e) => {
         await deleteDoc(doc(db, `CreatedClasses/${classOwnerMail}/classes/${classId}`))
@@ -160,6 +183,22 @@ const Main = ({ classData }) => {
     };
 
 
+    useEffect(()=>{
+        const callRef = collection(db, `Calls`);
+          const unsubscribe = onSnapshot(callRef, (querySnapshot) => {
+            const documentsData = [];
+            console.log(querySnapshot.docs);
+            querySnapshot.forEach((doc) => {
+              documentsData.push({
+                id: doc.id,
+                ...doc.data()
+              });
+            });
+            // setCreatedClasses(documentsData);
+          });
+          return () => unsubscribe();
+    },[])
+
     return (
         <div className="sm:w-full w-[35rem]">
             <TopBar />
@@ -210,7 +249,7 @@ const Main = ({ classData }) => {
                         <div className="border-2 p-4 flex flex-col items-center gap-2 rounded-md">
                             <h1 className='text-md font-semibold'>AU Meet</h1>
                             {classData.call ? (
-                                <Link to={`${classData.call}`} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Join Now</Link>
+                                <Link onClick={() => setCallClass(classData.id)} to={`${classData.call}`} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Join Now</Link>
                             ) : (
                                 <Link to='/call' onClick={() => setCallClass(classData.id)} className='bg-gradient-to-r from-[#07314B] via-[#1f5374] to-[#1174b1] text-white font-bold text-lg text-center px-3 py-2 rounded-md w-[10rem]'>Create Now</Link>
                             )}
@@ -247,6 +286,7 @@ const Main = ({ classData }) => {
                     </div>
                 </div>
             </div>
+            <button onClick={handleAssignment} className='rounded-full shadow-xl font-extralight border-2 text-3xl p-3 fixed bottom-7 right-7' ><FaPlus /></button>
             <Dialog
                 open={editOpen}
                 onClose={() => setEditOpen(false)}
@@ -287,6 +327,7 @@ const Main = ({ classData }) => {
                     </DialogActions>
                 </div>
             </Dialog>
+            <AssignmentForm/>
         </div>
     );
 }

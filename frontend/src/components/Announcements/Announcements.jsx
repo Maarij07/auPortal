@@ -33,11 +33,17 @@ const Announcements = ({ classData }) => {
             {announcement.map((item) => (
                 <div key={item.id} className="w-full bg-white sm:p-4 border-2 rounded-md">
                     <div className="flex gap-4 sm:pb-4 items-center">
-                        <Avatar style={{ width: 40, height: 40 }} />
-                        {item.sender}
+                        <Avatar style={{ width: 35, height: 35 }} />
+                        <div className="">
+                            <p className='text-sm'>{item.sender}</p>
+                            {/* <p className=''>{item.text}</p> */}
+                        </div>
                     </div>
-                    <p>{item.text}</p>
-                    <img src={item.imageUrl} alt={item.text} width={200} />
+                    {/* <img src={item.imageUrl} alt={item.text} width={200} /> */}
+                    <a target='_blank' href={item.imageUrl} className="border-2 w-[22rem] flex gap-4 items-center rounded-md p-2">
+                        <img src="/doc-img.png" alt="" width={28} />
+                        <p>Attached File: <span className='text-decoration-line: underline'>{item.text}</span> </p>
+                    </a>
                 </div>
             ))}
         </div>

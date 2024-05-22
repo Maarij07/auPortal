@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { IoSearchOutline } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
 import { Avatar, Menu, MenuItem } from '@mui/material';
-import { CreateClass, JoinClass, Todos, Sidebar } from '../index';
+import { CreateClass, JoinClass, Todos, Sidebar,Calendar } from '../index';
 import { useLocalContext } from '../../context/context';
 import { Classes } from '../index';
-import Calendar from 'react-calendar';
 import { useSelector } from 'react-redux';
 import { SelectUsers } from '../../store/userSlice';
 
@@ -15,7 +14,7 @@ const Navbar = () => {
 
     const handleClick = (event) =>setAnchorEl(event.currentTarget);
     const handleClose = () => setAnchorEl(null);
-
+    
     const handleJoin = () => {
         handleClose();
         setJoinClassDialog(true);

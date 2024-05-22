@@ -14,3 +14,6 @@ export {default as ZegoCloud} from './zegoCloud/zegoCloud.jsx';
 export {default as ForgotPassword} from './ForgotPassword/ForgotPassword.jsx';
 export {default as Announcements} from './Announcements/Announcements.jsx';
 export {default as UserProfile} from './UserProfile/UserProfile.jsx';
+export {default as Calendar} from './Calender/Calender.jsx';
+export {default as AssignmentForm} from './AssignmentForm/AssignmentForm.jsx';
+export {default as MainTabs} from './MainTabs/MainTabs.jsx';

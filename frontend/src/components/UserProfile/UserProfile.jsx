@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import { Sidebar } from '../index';
 import { useLocalContext } from '../../context/context';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
 import db from '../../lib/firebase';
 
 const UserProfile = () => {
     const [userData, setUserData] = useState([]);
     const { loggedInMail } = useLocalContext();
-    const userRef = doc(db, `Users/${loggedInMail}`);
+    const userRef = collection(db, `Users`);
     const unsubscribe = onSnapshot(userRef, (querySnapshot) => {
-        console.log(querySnapshot);
         const documentsData = [];
         querySnapshot.forEach((doc) => {
             documentsData.push({
@@ -18,9 +17,13 @@ const UserProfile = () => {
             });
         });
         setUserData(documentsData);
+        return () => unsubscribe();
     });
-    return () => unsubscribe();
     console.log(userData);
+    userData.forEach((id)=>{
+        if (id==loggedInMail)
+        console.log(id);
+    })
     return (
         <div className="flex">
             <Sidebar />

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useLocalContext } from '../../context/context';
 import db from '../../lib/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, updateDoc } from 'firebase/firestore';
 
 
 
@@ -56,8 +56,8 @@ export default function ZegoCLoud() {
       },
     });
 
-    const mainDoc = doc(db, `CreatedClasses/${loggedInMail}`);
-    const childDoc = doc(mainDoc, `classes/${callClass}`);
+
+    const mainDoc = doc(db, `Calls/${callClass}`);
     function getTextStartingWithCall(url) {
       if (url && url.includes("/call")) {
         // If the URL contains "/call", return the substring starting from "/call"
@@ -69,9 +69,9 @@ export default function ZegoCLoud() {
     }
     const sentence = sharedLinks[0].url;
     const callLink = getTextStartingWithCall(sentence);
-    console.log(callLink); // Log sharedLinks inside myMeeting function
+    console.log(callClass);
 
-    await updateDoc(childDoc,{
+    await setDoc(mainDoc,{
       call: callLink
     })
 

@@ -6,9 +6,10 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { FaGoogle } from "react-icons/fa";
 import { auth } from '../../lib/firebase';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "firebase/auth";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Signup() {
+    const navigate=useNavigate();
     const dispatch = useDispatch();
     const provider = new GoogleAuthProvider();
     const { login } = useLocalContext();
@@ -46,6 +47,7 @@ export default function Signup() {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             dispatch(setUser({ id: user.uid, email: user.email }));
+            navigate('/');
         }
         else {
             dispatch(setUser(null))
