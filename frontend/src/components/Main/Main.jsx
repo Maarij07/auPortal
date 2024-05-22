@@ -20,7 +20,7 @@ import { IoExitOutline } from "react-icons/io5";
 import Announcements from '../Announcements/Announcements';
 import { FaPlus } from "react-icons/fa6";
 import AssignmentForm from '../AssignmentForm/AssignmentForm';
-import {Tabs} from '../index';
+import { MainTabs } from '../index';
 
 const Main = ({ classData }) => {
     // console.log(classData.call);
@@ -49,9 +49,9 @@ const Main = ({ classData }) => {
     const [totalWeightage, setTotalWeightage] = useState(0);
     const [disabled, setDisabled] = useState(true);
     const [postCount, setPostCount] = useState(0)
-    const [assignmentEl,setAssignmentEl]=useState(null);
+    const [assignmentEl, setAssignmentEl] = useState(null);
 
-    const handleCloseAssignment=()=> setAssignmentEl(null);
+    const handleCloseAssignment = () => setAssignmentEl(null);
 
     const handleChange = (e) => {
         if (e.target.files[0]) {
@@ -111,7 +111,7 @@ const Main = ({ classData }) => {
         );
     };
 
-    const handleAssignment=()=>{
+    const handleAssignment = () => {
         handleCloseAssignment();
         setAssignmentDialog(true);
     }
@@ -183,21 +183,60 @@ const Main = ({ classData }) => {
     };
 
 
-    useEffect(()=>{
+    useEffect(() => {
         const callRef = collection(db, `Calls`);
-          const unsubscribe = onSnapshot(callRef, (querySnapshot) => {
+        const unsubscribe = onSnapshot(callRef, (querySnapshot) => {
             const documentsData = [];
             console.log(querySnapshot.docs);
             querySnapshot.forEach((doc) => {
-              documentsData.push({
-                id: doc.id,
-                ...doc.data()
-              });
+                documentsData.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
             });
             // setCreatedClasses(documentsData);
-          });
-          return () => unsubscribe();
-    },[])
+        });
+        return () => unsubscribe();
+    }, [])
+
+    const tabs = [
+        {
+            id: 'announcements', title: 'Announcements',
+            content: <div className="flex flex-col gap-4 overflow-hidden">
+                <div className="flex-grow flex border-2 cursor-pointer border-[#1174b1] py-6 h-[4rem] sm:h-[8rem] items-center gap-4 p-4 rounded-md shadow-md shadow-black" onClick={() => setShowInput(true)}>
+                    {showInput ? (
+                        <div className='w-full'>
+                            <TextField
+                                multiline
+                                label="Announce Something to your class"
+                                variant='filled'
+                                value={inputValue}
+                                onChange={(e) => setInputValue(e.target.value)}
+                                className='w-full p-4'
+                            />
+                            <div className="flex justify-between sm:mt-[1.2rem]">
+                                <input onChange={handleChange} type="file" color='primary' variant="outlined" />
+                                <div className="flex">
+                                    <Button onClick={() => setShowInput(false)}>Cancel</Button>
+                                    <Button onClick={handleUpload} color='primary' variant='contained'>Post</Button>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <Avatar />
+                            <p>Announce Something to your Class</p>
+                        </>
+                    )}
+                </div>
+                <div className="w-full flex flex-col gap-2 sm:w-[53rem] "><Announcements classData={classData} />
+                </div>
+            </div>
+        },
+        { id: 'classWork', title: 'Classwork', content: <p>Content for Classwork</p> },
+        { id: 'people', title: 'People', content: <p>Content for People</p> },
+        { id: 'group', title: 'Group', content: <p>Content for Group</p> },
+    ];
 
     return (
         <div className="sm:w-full w-[35rem]">
@@ -255,35 +294,7 @@ const Main = ({ classData }) => {
                             )}
                         </div>
                     </div>
-                    <div className="flex flex-col gap-4 overflow-hidden">
-                        <div className="flex-grow flex border-2 cursor-pointer border-[#1174b1] py-6 h-[4rem] sm:h-[8rem] items-center gap-4 p-4 rounded-md shadow-md shadow-black" onClick={() => setShowInput(true)}>
-                            {showInput ? (
-                                <div className='w-full'>
-                                    <TextField
-                                        multiline
-                                        label="Announce Something to your class"
-                                        variant='filled'
-                                        value={inputValue}
-                                        onChange={(e) => setInputValue(e.target.value)}
-                                        className='w-full p-4'
-                                    />
-                                    <div className="flex justify-between sm:mt-[1.2rem]">
-                                        <input onChange={handleChange} type="file" color='primary' variant="outlined" />
-                                        <div className="flex">
-                                            <Button onClick={() => setShowInput(false)}>Cancel</Button>
-                                            <Button onClick={handleUpload} color='primary' variant='contained'>Post</Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <>
-                                    <Avatar />
-                                    <p>Announce Something to your Class</p>
-                                </>
-                            )}
-                        </div>
-                        <div className="w-full flex flex-col gap-2 sm:w-[53rem] "><Announcements classData={classData} /></div>
-                    </div>
+                    <MainTabs tabs={tabs} />
                 </div>
             </div>
             <button onClick={handleAssignment} className='rounded-full shadow-xl font-extralight border-2 text-3xl p-3 fixed bottom-7 right-7' ><FaPlus /></button>
@@ -327,7 +338,7 @@ const Main = ({ classData }) => {
                     </DialogActions>
                 </div>
             </Dialog>
-            <AssignmentForm/>
+            <AssignmentForm />
         </div>
     );
 }
