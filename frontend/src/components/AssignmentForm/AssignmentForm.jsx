@@ -4,21 +4,91 @@ import { Button, Dialog, Slide } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import img1 from '../../assets/assignment1.svg'
 import img2 from '../../assets/assignment2.svg'
+import { storage } from '../../lib/firebase';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />
 });
 
-const AssignmentForm = () => {
+const AssignmentForm = ({ classData }) => {
 
-    const [formAssignmentNo, setFormAssignmentNo] = useState('');
+    const [formAssignmentNo, setFormAssignmentNo] = useState(classData.assignmentNo + 1);
     const [formAssignmentName, setFormAssignmentName] = useState('');
     const [formMarks, setFormMarks] = useState(0);
     const [formDeadline, setFormDeadline] = useState(new Date());
     const [formType, setFormType] = useState('individual');
     const [assignmentFile, setAssignmentFile] = useState(null);
+    const { assignmentDialog, setAssignmentDialog, loggedInMail } = useLocalContext();
 
-    const { assignmentDialog, setAssignmentDialog } = useLocalContext();
+    const handleFileChange = (e) => {
+        if (e.target.files[0]) {
+            setAssignmentFile(e.target.files[0]);
+        }
+    };
+
+    const handleUpload = (e) => {
+        e.preventDefault();
+
+        if (!assignmentFile) {
+            console.error("No file selected for upload");
+            return;
+        }
+        console.log("Reference created");
+        const uploadFile = ref(storage, `assignments/${file.name}`);
+        const uploadPost = uploadBytesResumable(uploadFile, assignmentFile);
+        setAssignmentDialog(false);
+
+        uploadPost.on(
+            'state_changed',
+            null,  // We ignore progress updates for now
+            (error) => {
+                console.error('Error uploading file:', error);
+            },
+            async () => {
+                try {
+                    const downloadURL = await getDownloadURL(uploadPost.snapshot.ref);
+                    console.log('File available at', downloadURL);
+                    setFormAssignmentNo((prevCount) => {
+                        const newCount = prevCount + 1;
+                        const mainDoc = doc(db, 'assignments/classes');
+                        const childDoc = doc(mainDoc, `${classData.id}/${newCount}`);
+                        const time = Timestamp.fromDate(new Date());
+                        const docData = {
+                            assignmentNumber: formAssignmentNo,
+                            assignmentName: formAssignmentName,
+                            TotalMarks: formMarks,
+                            Deadline: formDeadline,
+                            Type: formType,
+                            file: assignmentFile,
+                            timeUploaded: time
+                        };
+
+                        setDoc(childDoc, docData)
+                            .then(() => {
+                                console.log('Document successfully written!');
+                            })
+                            .catch((error) => {
+                                console.error('Error writing document:', error);
+                            });
+                        return newCount;
+                    });
+                    const id = classData.id;
+                    const mainDoc = doc(db, `CreatedClasses/${loggedInMail}`);
+                    const childDoc = doc(mainDoc, `classes/${id}`);
+                    const docData = {
+                        assignmentNo: formAssignmentNo
+                    }
+                    setDoc(childDoc, docData, { merge: true });
+
+                } catch (error) {
+                    console.error('Error getting download URL:', error);
+                }
+            }
+        );
+    }
+
+
     return (
         <div className="">
             <Dialog fullScreen open={assignmentDialog} onClose={() => setAssignmentDialog(false)} TransitionComponent={Transition}>
@@ -27,7 +97,7 @@ const AssignmentForm = () => {
                         <div className="joinClass cursor-pointer" onClick={() => setAssignmentDialog(false)}>
                             <Close />
                         </div>
-                        <Button onClick={() => { }} className='font-bold' variant="contained" color="primary">
+                        <Button onClick={handleUpload} className='font-bold' variant="contained" color="primary">
                             Assign
                         </Button>
                     </div>
@@ -67,14 +137,14 @@ const AssignmentForm = () => {
                                         </div>
                                         <div className="flex text-black flex-col ">
                                             <label>Type</label>
-                                            <select id="type" class="bg-[#FFFAFA] opacity-30 h-[2rem]" onChange={(e)=>setFormType(e.target.value)}>
+                                            <select id="type" class="bg-[#FFFAFA] opacity-30 h-[2rem]" onChange={(e) => setFormType(e.target.value)}>
                                                 <option value="individual" selected={formType === 'individual'}>Individual</option>
                                                 <option value="group" selected={formType === 'group'}>Group</option>
                                             </select>
                                         </div>
                                         <div className="flex flex-col ">
                                             <label>Upload File</label>
-                                            <input className='bg-[#FFFAFA] opacity-30 h-[2rem]' type="file" />
+                                            <input onChange={handleFileChange} className='bg-[#FFFAFA] opacity-30 h-[2rem]' type="file" />
                                         </div>
                                     </form>
                                 </div>

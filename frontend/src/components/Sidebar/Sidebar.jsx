@@ -46,7 +46,7 @@ const Sidebar = () => {
     return (
         <div className="hidden sm:flex flex-col gap-10 flex-grow bg-gradient-to-b from-[#032B44] via-[#205475] to-[#052F48] h-screen w-[11rem] text-white fixed left-0 items-center justify-around text-xl ">
             <div className="">
-                <img src="/logo2.png" alt="logo" width={300} />
+                <img src="/logo-white.png" alt="logo" width={2700} />
             </div>
             <div className="flex flex-col gap-6">
                 <Link to='/' className="flex items-center gap-2">

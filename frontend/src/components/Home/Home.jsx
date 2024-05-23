@@ -72,7 +72,7 @@ const Home = ({ children }) => {
         }
     }, [currentUser]);
 
-    console.log(currentUser.currentUser);
+    console.log(currentUser);
     return (
         <div className="flex sm:ml-[12rem]">
             <Sidebar />

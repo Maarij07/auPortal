@@ -51,11 +51,11 @@ const Main = ({ classData }) => {
     const [postCount, setPostCount] = useState(classData.posts);
     const [assignmentEl, setAssignmentEl] = useState(null);
     const [callLink, setCallLink] = useState(null);
-    const [assignmentCount,setAssignmentCount] =useState(classData.assignmentNo);
-    const [quizCount,setQuizCount] = useState(classData.quizNo);
+    const [assignmentCount, setAssignmentCount] = useState(classData.assignmentNo);
+    const [quizCount, setQuizCount] = useState(classData.quizNo);
 
 
- 
+
     const handleCloseAssignment = () => setAssignmentEl(null);
     console.log(postCount);
 
@@ -117,7 +117,7 @@ const Main = ({ classData }) => {
                         posts: postCount
                     }
                     setDoc(childDoc, docData, { merge: true });
-
+                     show();
                 } catch (error) {
                     console.error('Error getting download URL:', error);
                 }
@@ -218,36 +218,49 @@ const Main = ({ classData }) => {
         });
         return () => unsubscribe();
     }, [])
+    const show = () => {
+        var a = document.getElementById("a");
+        var b = document.getElementById("b");
+        a.style.display = "none";
+        b.style.display = "block";
+        console.log("show called")
 
+    }
+    const hide = () => {
+        var a = document.getElementById("a");
+        var b = document.getElementById("b");
+        a.style.display = "block";
+        b.style.display = "none";
+        console.log("hide called")
+
+    }
     const tabs = [
         {
             id: 'announcements', title: 'Announcements',
             content: <div className="flex flex-col gap-4 overflow-hidden">
                 <div className="flex-grow flex border-2 cursor-pointer border-[#1174b1] py-6 h-[4rem] sm:h-[8rem] items-center gap-4 p-4 rounded-md shadow-md shadow-black" onClick={() => setShowInput(true)}>
-                    {showInput ? (
-                        <div className='w-full'>
-                            <TextField
-                                multiline
-                                label="Announce Something to your class"
-                                variant='filled'
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                className='w-full p-4'
-                            />
-                            <div className="flex justify-between sm:mt-[1.2rem]">
-                                <input onChange={handleChange} type="file" color='primary' variant="outlined" />
-                                <div className="flex">
-                                    <Button onClick={() => setShowInput(false)}>Cancel</Button>
-                                    <Button onClick={handleUpload} color='primary' variant='contained'>Post</Button>
-                                </div>
+                    <div  id="a" className='w-full' style={{display:'none'}}>
+                        <TextField
+                            multiline
+                            label="Announce Something to your class"
+                            variant='filled'
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            className='w-full p-4'
+                        />
+                        <div className="flex justify-between sm:mt-[1.2rem]">
+                            <input onChange={handleChange} type="file" color='primary' variant="outlined" />
+                            <div className="flex">
+                                <Button onClick={show}>Cancel</Button>
+                                <Button onClick={handleUpload} color='primary' variant='contained'>Post</Button>
                             </div>
                         </div>
-                    ) : (
-                        <>
-                            <Avatar />
-                            <p>Announce Something to your Class</p>
-                        </>
-                    )}
+                    </div>
+                    <div onClick={hide} id='b' className="w-full">
+                        <Avatar />
+                        <p>Announce Something to your Class</p>
+                    </div>
+
                 </div>
                 <div className="w-full flex flex-col gap-2 sm:w-[53rem] "><Announcements classData={classData} />
                 </div>
@@ -358,7 +371,7 @@ const Main = ({ classData }) => {
                     </DialogActions>
                 </div>
             </Dialog>
-            <AssignmentForm />
+            <AssignmentForm classData={classData} />
         </div>
     );
 }
